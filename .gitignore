@@ -1,0 +1,7 @@
+.venv
+*.egg-info/
+**/__pycache__
+.pdm.toml
+__pypackages__/
+
+data/save_later_feeds.db

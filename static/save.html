@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/favicons/site.webmanifest">
+    <title>Read it later</title>
+    <style>
+        body {
+            font-family: "Inter", "Helvetica", "Apple Color Emoji", "Segoe UI Emoji", "NotoColorEmoji", "Noto Color Emoji", "Segoe UI Symbol", "Android Emoji", "EmojiSymbols", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", "Noto Sans", "sans-serif";
+            background: #232136;
+            color: #E0DEF4;
+        }
+
+        h2 {
+            color: #EA6F92;
+            text-align: center;
+        }
+
+        input, button {
+            background-color: #2D2A45;
+            border-radius: 5px;
+            color: inherit;
+            border: 1px solid #E0DEF4;
+            box-sizing: border-box;
+            height: 1.6rem;
+            width: 100%;
+        }
+
+        button {
+            background-color: inherit;
+            height: 2rem;
+            font-size: 1.2rem;
+            color: #C4A7E7;
+        }
+
+        .message {
+            padding: 5px;
+        }
+
+        a {
+            color: #C4A7E7;
+            text-decoration: none;
+        }
+
+        form {
+            display: table;
+        }
+
+        ul, li {
+            display: table-row;
+            list-style: None;
+        }
+
+        label {
+            display: table-cell;
+            text-align: right;
+            padding-right: 7px;
+        }
+
+        input {
+            display: table-cell;
+            margin-bottom: 5px;
+        }
+    </style>
+    <script>
+        function autofillSecret() {
+            const params = (new URL(document.location)).searchParams;
+            const secret = params.get("secret");
+            if (secret) {
+                const secret_elm = document.getElementById("feed_secret");
+                secret_elm.value = secret;
+                secret_elm.disabled = true;
+            }
+        }
+        async function handleSubmit() {
+            const title = document.getElementById("post_title");
+            const url = document.getElementById("post_url")
+            const secret = document.getElementById("feed_secret");
+
+            const formValues = {
+                title: title.value,
+                link: url.value,
+                secret: secret.value,
+            };
+
+            body = JSON.stringify(formValues);
+
+            const response = await fetch('/posts/', {
+                method: 'POST',
+                credentials: 'same-origin',
+                body: body,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'User-Agent': window.navigator.userAgent
+                }
+            });
+            if (response.status !== 200) {
+                const mesg = document.getElementById("error_message");
+                mesg.innerHTML = "Error saving post, the server might be down :(";
+            } else {
+                const postJson = await response.json();
+                console.log(postJson["title"]);
+                const mesg = document.getElementById("error_message");
+                mesg.innerHTML = `${postJson["title"]} saved for later reading :)`;
+            }
+        }
+    </script>
+</head>
+
+<body onload="autofillSecret()">
+    <center>
+        <ul>
+            <li>
+                <!-- The empty label ensures that the header is aligned with the right column -->
+                <label></label>
+                <h2>Post to Feed</h2>
+            </li>
+            <li>
+                <label for="title" title="Post Title (Optional)">Title (Optional):</label>
+                <input type="text" id="post_title" name="title">
+            </li>
+            <li>
+                <label for="link" title="URL of the post you plan to save to a feed">URL:</label>
+                <input type="text" id="post_url" name="subtitle" autofocus>
+            </li>
+            <li>
+                <label for="secret" title="Password. Think of this as your username/password in one. Don't share it with others!">Secret:</label>
+                <input type="password" id="feed_secret" name="secret">
+            </li>
+            <li class="button">
+                <!-- The empty label ensures that the button is aligned with the right column -->
+                <label></label>
+                <button type="button" onclick="handleSubmit()">Save Post</button>
+            </li>
+        </ul>
+        <div class="message">
+            <p id="error_message"></p>
+        </div>
+    </center>
+</body>
+
+</html>
