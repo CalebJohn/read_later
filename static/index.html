@@ -110,12 +110,12 @@
             } else {
                 const feedJson = await response.json();
                 console.log(feedJson["feed_url"]);
+                const mesg = document.getElementById("feed_url_message");
+                mesg.style = "";
                 const link = document.getElementById("feed_url_link");
+                link.innerHTML = feedJson["feed_url"];
                 link.href = feedJson["feed_url"];
                 link.style = "";
-                const mesg = document.getElementById("feed_url_message");
-                mesg.innerHTML = feedJson["feed_url"];
-                mesg.style = "";
                 const url = window.location.href;
                 const bmesg = document.getElementById("bookmarklet_message");
                 const burl = new URL(`/posts/?raw_url=" + encodeURIComponent(window.location.href)+"&secret=${formValues.secret}`, url);
@@ -159,18 +159,23 @@
                 <button type="button" onclick="handleSubmit()">Create Feed</button>
             </li>
         </ul>
+        <div class="message" style="max-width: 50%">
+            <p id="instruction_message">
+              This is the feed creation interface, this process only needs to be done <b>once</b>. Simply fill in the above fields, and press "Create Feed". Your personal feed URL will be shown below, along with a bookmarklet (clicking on this bookmark will save the current page to Read Layer), and link to your Personal feed page.
+            </p>
+        </div>
         <div class="message">
             <p id="error_message"></p>
         </div>
         <div class="message">
-            <a style="display: none;" id="feed_url_link">This is the feed url, please save it:</a>
-            <span style="display: none;" id="feed_url_message"></span>
+            <span style="display: none;" id="feed_url_message">Pesonal feed url:</span>
+            <a style="display: none;" id="feed_url_link"></a>
         </div>
         <div class="message">
-            <a style="display: none;" id="bookmarklet_message">This is a bookmarklet, use it to save posts to your feed. Right click here to bookmark this link</a>
+            <a style="display: none;" id="bookmarklet_message">Bookmarklet, right click here to bookmark this link</a>
         </div>
         <div class="message">
-            <a style="display: none;" id="bookmark_message">If bookmarklets don't work on your system, you can use a regular website to submit post. This link has your secret embedded for convenience. Right click here to bookmark this link</a>
+            <a style="display: none;" id="bookmark_message">Personal site submission page, right click here to bookmark this link</a>
         </div>
     </center>
 </body>
