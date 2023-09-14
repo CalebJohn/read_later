@@ -19,12 +19,6 @@ Read Later is currently hosted on a free tier with limited data storage, so feed
 
 TODO: Generate and/or view swagger docs
 
-# Deployment
-Read Later is a fairly simple CRUD app built with FastAPI, this means it should be fairly easy to host anywhere. The instance I use is hosted with [fly.io](https://fly.io/), which means a deploy is as simple as
-```
-fly deploy
-```
-
 # Development
 ```
 uvicorn src.main:app
