@@ -1,4 +1,5 @@
 from datetime import datetime
+import os
 from urllib.parse import unquote
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request, Response
@@ -10,14 +11,14 @@ from sqlalchemy.orm import Session
 
 import crud, extractor, feed_gen, models, schemas
 from database import engine, get_db
-from metadata import SITE_HOST, SITE_PORT
+from metadata import SITE_HOST, SITE_PORT, APP_DIR
 
 # Create the database
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory=os.path.join(APP_DIR, "templates"))
 
 @app.get("/feeds/{public_hash}.atom.xml")
 def get_atom_feed(public_hash: str, db: Session = Depends(get_db)):
@@ -106,7 +107,7 @@ def post_new_item_hack(raw_url: str, secret: str, user_agent: str | None = Heade
         link=url, secret=secret, publication_date=int(datetime.utcnow().timestamp())
     )
     post_new_item(new_post, user_agent, db)
-    return RedirectResponse(url)
+    return RedirectResponse("/success")
 
 
 @app.get("/posts/{id}")
@@ -123,22 +124,26 @@ def get_post(id: int, db: Session = Depends(get_db)):
 
 @app.get("/")
 def landing_page():
-    return FileResponse("static/index.html")
+    return FileResponse(os.path.join(APP_DIR, "static/index.html"))
 
-@app.get("/save/")
+@app.get("/save")
 def landing_page():
-    return FileResponse("static/save.html")
+    return FileResponse(os.path.join(APP_DIR, "static/save.html"))
+
+@app.get("/success")
+def landing_page():
+    return FileResponse(os.path.join(APP_DIR, "static/success.html"))
 
 
 @app.get("/favicon.ico")
 def landing_favicon():
-    return FileResponse("static/favicon.ico")
+    return FileResponse(os.path.join(APP_DIR, "static/favicon.ico"))
 
 
-app.mount("/favicons", StaticFiles(directory="static", html=True), name="favicons")
+app.mount("/favicons", StaticFiles(directory=os.path.join(APP_DIR, "static"), html=True), name="favicons")
 
 
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("main:app", host=SITE_HOST, port=SITE_PORT, reload=True)
+    uvicorn.run("main:app", host=SITE_HOST, port=int(SITE_PORT), reload=True)
