@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import func
 
-from . import models, schemas
+import models, schemas
 
 FEED_MAX_SIZE = 1e9  # 1 GB
 FEED_POST_LIFETIME_S = 60 * 60 * 24 * 90  # seconds

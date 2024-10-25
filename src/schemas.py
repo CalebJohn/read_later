@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, validator
 
-from .metadata import SITE_URL
+from metadata import SITE_URL
 
 
 class PostBase(BaseModel):

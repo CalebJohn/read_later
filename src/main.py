@@ -8,9 +8,9 @@ from fastapi.templating import Jinja2Templates
 from markupsafe import Markup
 from sqlalchemy.orm import Session
 
-from . import crud, extractor, feed_gen, models, schemas
-from .database import engine, get_db
-from .metadata import SITE_HOST, SITE_PORT
+import crud, extractor, feed_gen, models, schemas
+from database import engine, get_db
+from metadata import SITE_HOST, SITE_PORT
 
 # Create the database
 models.Base.metadata.create_all(bind=engine)

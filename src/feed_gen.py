@@ -3,8 +3,8 @@ import datetime
 from feedgenerator import Atom1Feed, Rss201rev2Feed
 from markupsafe import Markup
 
-from . import schemas
-from .metadata import SITE_URL
+import schemas
+from metadata import SITE_URL
 
 
 def _create_feed(feed: schemas.Feed, feed_class):
