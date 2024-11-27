@@ -1,7 +1,7 @@
-from urllib.parse import urlsplit, urlunsplit
+from urllib.parse import urlsplit, urljoin
 
 import httpx
-from bs4 import BeautifulSoup
+from lxml import html
 from readability import Document
 
 
@@ -17,15 +17,22 @@ def normalize_image_src(url: str, body: str):
     e.g. /images/mountain.png instead of https://my.url/images/mountain.png
     we need to normalize this
     """
-    soup = BeautifulSoup(body, "lxml")
+    tree = html.fromstring(body)
 
-    scheme, host, _, _, _ = urlsplit(url)
+    for img in tree.xpath('//img[@src]'):
+        src = img.get('src')
 
-    for img in soup.find_all("img", src=True):
-        _, _, path, query, fragment = urlsplit(img["src"])
-        img["src"] = urlunsplit((scheme, host, path, query, fragment))
+        parsed_src = urlsplit(src)
 
-    return str(soup)
+        # Skip if the image already has a domain (has a netloc)
+        if parsed_src.netloc:
+            continue
+
+        normalized_src = urljoin(url, src)
+
+        img.set('src', normalized_src)
+
+    return html.tostring(tree, method='html', encoding='unicode')
 
 
 def fetch_document(url: str, user_agent: str | None):
