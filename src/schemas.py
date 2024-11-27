@@ -37,7 +37,7 @@ class Post(PostBase):
     update_date: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class FeedBase(BaseModel):
@@ -60,4 +60,4 @@ class Feed(FeedBase):
         return f"{SITE_URL}/feeds/{v}.atom.xml"
 
     class Config:
-        orm_mode = True
+        from_attributes = True
