@@ -62,7 +62,7 @@ def post_new_feed(new_feed: schemas.FeedNew, db: Session = Depends(get_db)):
 
 
 @app.post("/posts/", response_model=schemas.Post)
-def post_new_item(new_post: schemas.PostNew, user_agent: Annotated[str, None, Header()] = None, db: Session = Depends(get_db)):
+def post_new_item(new_post: schemas.PostNew, needs_extracting: bool = True, user_agent: Annotated[str, None, Header()] = None, db: Session = Depends(get_db)):
     """
     Updates the feed that matches the supplied secret
     """
@@ -78,7 +78,10 @@ def post_new_item(new_post: schemas.PostNew, user_agent: Annotated[str, None, He
         if not content:
             content = new_post.link
 
-    title, content = extractor.extract_document(content)
+    if needs_extracting or not new_post.title:
+        title, extracted = extractor.extract_document(content)
+    if needs_extracting:
+        content = extracted
     if not new_post.title:
         new_post.title = Markup(title).striptags()
 
