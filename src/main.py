@@ -1,5 +1,6 @@
 from datetime import datetime
 import os
+from typing import Annotated
 from urllib.parse import unquote
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request, Response
@@ -61,7 +62,7 @@ def post_new_feed(new_feed: schemas.FeedNew, db: Session = Depends(get_db)):
 
 
 @app.post("/posts/", response_model=schemas.Post)
-def post_new_item(new_post: schemas.PostNew, user_agent: str | None = Header(), db: Session = Depends(get_db)):
+def post_new_item(new_post: schemas.PostNew, user_agent: Annotated[str, None, Header()] = None, db: Session = Depends(get_db)):
     """
     Updates the feed that matches the supplied secret
     """
@@ -94,7 +95,7 @@ def post_new_item(new_post: schemas.PostNew, user_agent: str | None = Header(), 
 
 
 @app.get("/posts/")
-def post_new_item_hack(raw_url: str, secret: str, user_agent: str | None = Header(), db: Session = Depends(get_db)):
+def post_new_item_hack(raw_url: str, secret: str, user_agent: Annotated[str, None, Header()] = None, db: Session = Depends(get_db)):
     """
     This is a hack to get around content security policy from websites.
 
