@@ -110,7 +110,7 @@ def post_new_item_hack(raw_url: str, secret: str, user_agent: Annotated[str, Non
     new_post = schemas.PostNew(
         link=url, secret=secret, publication_date=int(datetime.utcnow().timestamp())
     )
-    post_new_item(new_post, user_agent, db)
+    post_new_item(new_post, True, user_agent, db)
     return RedirectResponse("/success")
 
 
